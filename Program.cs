@@ -95,6 +95,7 @@ namespace Bowling
             int[][] jaggedThrows = new int[players.Length][];
             int[][] jaggedScore = new int[players.Length][];
             int throwNumber = 18;
+            const int EXTRA_THROW = 1, TWO_EXTRA_THROWS = 2, STRIKE_OR_SPARE=10;
 
             for (int player = 0; player < players.Length; player++) //checking for every player if we need to give extra throws
             {
@@ -103,19 +104,19 @@ namespace Bowling
                 int pinsSecondThrow = throws[player, LAST_THROW];
 
 
-                if (pinsFirstThrow == 10) // Strike, user gets 2 extra throws
+                if (pinsFirstThrow == STRIKE_OR_SPARE) // Strike, user gets 2 extra throws
                 {
                     if (!jaggedCreated) //checking if we craeted a jagged array, meaning another player already got extra rounds
                     {
                         //create jagged arrays
-                        jaggedThrows = TwoDToJagged(throws, player, 2);
+                        jaggedThrows = TwoDToJagged(throws, player, TWO_EXTRA_THROWS);
                         jaggedScore = TwoDToJagged(scores, player, 1);
                         jaggedCreated = true;
                     }
                     else
                     {
                         //increase the columns of the already existing jagged array
-                        ModifyJagged(jaggedThrows, player, 2);
+                        ModifyJagged(jaggedThrows, player, TWO_EXTRA_THROWS);
                         ModifyJagged(jaggedScore, player, 1);
                     }
 
@@ -131,7 +132,7 @@ namespace Bowling
 
                     Console.Write($"{players[player]}'s 4th throw is ");
                     Thread.Sleep(2000);
-                    int pinsFourthThrow = Throw(10 - pinsThirdThrow);
+                    int pinsFourthThrow = Throw(STRIKE_OR_SPARE - pinsThirdThrow);
                     jaggedThrows[player][throwNumber + 3] = pinsFourthThrow;
                     Console.Write(pinsFourthThrow);
 
@@ -143,19 +144,19 @@ namespace Bowling
 
 
                 }
-                else if (pinsFirstThrow + pinsSecondThrow == 10)// Spare, user gets 1 extra throw
+                else if (pinsFirstThrow + pinsSecondThrow == STRIKE_OR_SPARE)// Spare, user gets 1 extra throw
                 {
                     if (!jaggedCreated)//checking if we craeted a jagged array, meaning another player already got extra rounds
                     {
                         //create jagged arrays
-                        jaggedThrows = TwoDToJagged(throws, player, 2);
+                        jaggedThrows = TwoDToJagged(throws, player, EXTRA_THROW);
                         jaggedScore = TwoDToJagged(scores, player, 1);
                         jaggedCreated = true;
                     }
                     else
                     {
                         //increase the columns of the already existing jagged array
-                        ModifyJagged(jaggedThrows, player, 1);
+                        ModifyJagged(jaggedThrows, player, EXTRA_THROW);
                         ModifyJagged(jaggedScore, player, 1);
                     }
                     Console.Write($"{players[player]}'s 3rd throw is ");
@@ -163,6 +164,8 @@ namespace Bowling
                     int pinsThirdThrow = Throw();
                     jaggedThrows[player][throwNumber + 2] = pinsThirdThrow;
                     Console.Write(pinsThirdThrow);
+
+                    Console.WriteLine();
 
                     //update the previous and current score
                     jaggedScore[player][jaggedScore[player].Length - 2] += pinsThirdThrow;
