@@ -225,10 +225,10 @@ namespace Bowling
                 {
                     scores[player, frame - 1] += pinsFirstThrow;
                 }
-            }
 
-            if (frame > 0)
                 scores[player, frame] = scores[player, frame - 1] + pinsFirstThrow + pinsSecondThrow;
+            }
+              
             else
                 scores[player, frame] = pinsFirstThrow + pinsSecondThrow; //first frame we don't add the score thus far
         }
