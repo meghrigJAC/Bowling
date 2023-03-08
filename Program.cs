@@ -365,10 +365,13 @@ namespace Bowling
                 if (rearrangedScores[maxIndex][rearrangedScores[maxIndex].Length - 1] < rearrangedScores[row][rearrangedScores[row].Length - 1])
                     maxIndex = row;
             }
+            if (maxIndex != 0) 
+            { 
 
             SwapRowsJagged(rearrangedThrows, maxIndex);
             SwapRows(rearrangedPlayers, maxIndex);
             SwapRowsJagged(rearrangedScores, maxIndex);
+            }
 
             PrintLeaderBoardJagged(rearrangedThrows, rearrangedPlayers, rearrangedScores);
         }
@@ -405,16 +408,8 @@ namespace Bowling
         public static void SwapRowsJagged(int[][] anArray, int maxIndex)
         {
             int[] temp = new int[anArray[maxIndex].Length];
-            int[] temp2 = new int[anArray[0].Length];
-
-
-            for (int column = 0; column < temp.Length; column++)
-                temp[column] = anArray[maxIndex][column];
-
-            for (int column = 0; column < temp2.Length; column++)
-                temp2[column] = anArray[0][column];
-
-            anArray[maxIndex] = temp2;
+           
+            anArray[maxIndex] = anArray[0];
             anArray[0] = temp;
 
         }
