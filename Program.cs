@@ -8,6 +8,9 @@ namespace Bowling
         {
             Bowling();
         }
+        /*
+         * This method starts a bowling gameplay
+         */
         public static void Bowling()
         {
             const int MIN_PLAYER = 1;
@@ -27,13 +30,13 @@ namespace Bowling
 
         }
 
-               /*
-               * This method starts scanning the throws TwoDArray colum-wise 
-               * In every frame, every player throws twice by calling the Throw method
-               * The score is updated after a player plays a round
-               * After every player plays a frame round, the throws and scores arrays are displayed 
-               * After the 10 frames are played CheckExtraRounds is called to check if extra rounds should be given to certain array depending on their last frame throws
-               */
+        /*
+        * This method starts scanning the throws TwoDArray colum-wise 
+        * In every frame, every player throws twice by calling the Throw method
+        * The score is updated after a player plays a round
+        * After every player plays a frame round, the throws and scores arrays are displayed 
+        * After the 10 frames are played CheckExtraRounds is called to check if extra rounds should be given to certain array depending on their last frame throws
+        */
         public static void GamePlay(int[,] throws, int[,] scores, string[] players)
         {
             int frame = 1;
@@ -95,7 +98,7 @@ namespace Bowling
             int[][] jaggedThrows = new int[players.Length][];
             int[][] jaggedScore = new int[players.Length][];
             int throwNumber = 18;
-            const int EXTRA_THROW = 1, TWO_EXTRA_THROWS = 2, STRIKE_OR_SPARE=10;
+            const int EXTRA_THROW = 1, TWO_EXTRA_THROWS = 2, STRIKE_OR_SPARE = 10;
 
             for (int player = 0; player < players.Length; player++) //checking for every player if we need to give extra throws
             {
@@ -173,7 +176,7 @@ namespace Bowling
 
                 }
 
-                if (jaggedCreated) // if we didn't give extra throws no need to print anything
+                if (jaggedCreated) // if we didn't give extra throws no need to print anything -- there is a bug to be fixed here
                 {
                     PrintJaggedArray(jaggedThrows, $"Throws After EXTRA Frame ", players);
                     PrintJaggedArray(jaggedScore, $"Scores After EXTRA Frame ", players);
@@ -183,7 +186,10 @@ namespace Bowling
             }
         }
 
-
+        /*
+     * This method prints a 2D array
+     * It takes a 2D array a 1D array and a message as parameters
+     */
         public static void PrintTwoDArray(int[,] TwoDArray, string message, string[] array)
         {
             Console.WriteLine($"{message}");
@@ -217,6 +223,7 @@ namespace Bowling
                 indexOfPreviousRoundSecondThrow = (frame - 1) * 2 + 1;
                 previousRoundFirstThrowPins = throws[player, indexOfPreviousRoundFirstThrow];
                 previousRoundSecondThrowPins = throws[player, indexOfPreviousRoundSecondThrow];
+
                 if (previousRoundFirstThrowPins == 10) //strike
                 {
                     scores[player, frame - 1] += pinsFirstThrow + pinsSecondThrow;
@@ -228,7 +235,7 @@ namespace Bowling
 
                 scores[player, frame] = scores[player, frame - 1] + pinsFirstThrow + pinsSecondThrow;
             }
-              
+
             else
                 scores[player, frame] = pinsFirstThrow + pinsSecondThrow; //first frame we don't add the score thus far
         }
@@ -240,6 +247,11 @@ namespace Bowling
             return randomNumber.Next(MIN_PIN, max + 1);
         }
 
+        /*
+         * This method creates copies of the arrays its receives as parameters
+         * finds the max player row index using the frame argument
+         * Places the max player row on the first row by swapping with the first row
+         */
         public static void RearrangeAndPrintBoard(int[,] throws, string[] players, int[,] scores, int frame)
         {
             string[] rearrangedPlayers = new string[players.Length];
@@ -248,23 +260,33 @@ namespace Bowling
 
             int maxIndex = 0;
 
+            //copy the arrays
+
             CopyArray(rearrangedPlayers, players);
             CopyArray(rearrangedThrows, throws);
             CopyArray(rearrangedScores, scores);
 
-
+            // find the player with the highest score 
             for (int row = 1; row < scores.GetLength(0); row++)
             {
                 if (scores[maxIndex, frame] < scores[row, frame])
                     maxIndex = row;
             }
 
-            SwapRows(rearrangedThrows, maxIndex);
-            SwapRows(rearrangedPlayers, maxIndex);
-            SwapRows(rearrangedScores, maxIndex);
 
+            //if the max score player is not already on the first row swap
+            if (maxIndex != 0)
+            {
+                SwapRows(rearrangedThrows, maxIndex);
+                SwapRows(rearrangedPlayers, maxIndex);
+                SwapRows(rearrangedScores, maxIndex);
+            }
             PrintLeaderBoard(rearrangedThrows, rearrangedPlayers, rearrangedScores, frame);
         }
+
+        /*
+        * This method copies the content of one 2D int array to another
+        */
         public static void CopyArray(int[,] newArray, int[,] anArray)
         {
             for (int row = 0; row < anArray.GetLength(0); row++)
@@ -275,6 +297,10 @@ namespace Bowling
                 }
             }
         }
+
+        /*
+         * This method copies the content of one string array to another
+         */
         public static void CopyArray(string[] newArray, string[] anArray)
         {
             for (int i = 0; i < anArray.Length; i++)
@@ -282,26 +308,37 @@ namespace Bowling
                 newArray[i] = anArray[i];
             }
         }
+
+        /*
+         * This method swaps the content of 2 rows (index zero and maxIndex) in a 2D array
+         */
         public static void SwapRows(int[,] anArray, int maxIndex)
         {
             int[] temp = new int[anArray.GetLength(1)];
 
             for (int column = 0; column < anArray.GetLength(1); column++)
+            {
                 temp[column] = anArray[maxIndex, column];
-
-            for (int column = 0; column < anArray.GetLength(1); column++)
                 anArray[maxIndex, column] = anArray[0, column];
-
-            for (int column = 0; column < anArray.GetLength(1); column++)
                 anArray[0, column] = temp[column];
+            }
+
         }
 
+        /*
+         * This method swaps the content of 2 indexes (zero and maxIndex) in a string array
+         */
         public static void SwapRows(string[] anArray, int maxIndex)
         {
             string temp = anArray[0];
             anArray[0] = anArray[maxIndex];
             anArray[maxIndex] = temp;
         }
+
+        /*
+        * This method prints the Leaderboard
+        * No need to calculate score, use frame argument and display score at that index
+        */
         public static void PrintLeaderBoard(int[,] throws, string[] players, int[,] scores, int frame)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -320,6 +357,10 @@ namespace Bowling
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+        /*
+         * This method takes and validates an interger user input
+         */
 
         public static int GetNumber(string msg, int min, int max = int.MaxValue)
         {
@@ -340,42 +381,54 @@ namespace Bowling
             return number;
         }
         #region jagged
+
+        /*
+        * This method creates copies of the arrays its receives
+        * finds the player with max score by scanning the last score column of every row
+        * places the max player row on the first row by swapping with the first row
+        */
         public static void RearrangeAndPrintBoardJagged(int[][] throws, string[] players, int[][] scores)
         {
+            // create jagged arrays of number of players rows
             string[] rearrangedPlayers = new string[players.Length];
             int[][] rearrangedThrows = new int[throws.Length][];
             int[][] rearrangedScores = new int[scores.Length][];
 
             int maxIndex = 0;
 
-
+            // create each row in a jagged array
             for (int i = 0; i < throws.Length; i++)
                 rearrangedThrows[i] = new int[throws[i].Length];
 
             for (int i = 0; i < scores.Length; i++)
                 rearrangedScores[i] = new int[scores[i].Length];
 
+            // copy the array content
             CopyArray(rearrangedPlayers, players);
             CopyJaggedArray(rearrangedThrows, throws);
             CopyJaggedArray(rearrangedScores, scores);
 
-
+            // find the max score player
             for (int row = 1; row < rearrangedScores.Length; row++)
             {
                 if (rearrangedScores[maxIndex][rearrangedScores[maxIndex].Length - 1] < rearrangedScores[row][rearrangedScores[row].Length - 1])
                     maxIndex = row;
             }
-            if (maxIndex != 0) 
-            { 
 
-            SwapRowsJagged(rearrangedThrows, maxIndex);
-            SwapRows(rearrangedPlayers, maxIndex);
-            SwapRowsJagged(rearrangedScores, maxIndex);
+            //if the max score player is not already on the first row swap
+            if (maxIndex != 0)
+            {
+                SwapRowsJagged(rearrangedThrows, maxIndex);
+                SwapRows(rearrangedPlayers, maxIndex);
+                SwapRowsJagged(rearrangedScores, maxIndex);
             }
 
             PrintLeaderBoardJagged(rearrangedThrows, rearrangedPlayers, rearrangedScores);
         }
-
+        /*
+        * 
+        * This method copies the content of one jagged array to another
+        */
         public static void CopyJaggedArray(int[][] newArray, int[][] anArray)
         {
             for (int row = 0; row < anArray.Length; row++)
@@ -386,6 +439,11 @@ namespace Bowling
                 }
             }
         }
+
+        /*
+     * 
+     * This method prints the leaderboard, to get the score use the index of the last column of every row
+     */
         public static void PrintLeaderBoardJagged(int[][] throws, string[] players, int[][] scores)
         {
 
@@ -405,15 +463,25 @@ namespace Bowling
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+
+        /*
+       * 
+       * This method swaps 2 rows of jagged array
+       */
         public static void SwapRowsJagged(int[][] anArray, int maxIndex)
         {
             int[] temp = new int[anArray[maxIndex].Length];
-           
+
             anArray[maxIndex] = anArray[0];
             anArray[0] = temp;
 
         }
 
+        /*
+        * 
+        * This method increases the size of one row in a jagged array by sizeIncrease and copies the content
+        */
         public static void ModifyJagged(int[][] jaggedArray, int row, int cells)
         {
             int[] newArray = new int[jaggedArray[row].Length + cells];
@@ -424,6 +492,12 @@ namespace Bowling
             }
             jaggedArray[row] = newArray;
         }
+
+        /*
+        * 
+        * This method converts a 2D array to jagged Array. The row at index r has original  size + sizeIncrease columns
+        */
+
         public static int[][] TwoDToJagged(int[,] TwoDArray, int r, int sizeIncrease)
         {
             int[][] jaggedArray = new int[TwoDArray.GetLength(0)][];
@@ -445,6 +519,12 @@ namespace Bowling
             }
             return jaggedArray;
         }
+
+        /*
+         * 
+         * This method prints a jagged array
+         */
+
         public static void PrintJaggedArray(int[][] TwoDArray, string message, string[] array)
         {
             Console.WriteLine($"{message}");
